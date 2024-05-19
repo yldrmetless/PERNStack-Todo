@@ -1,29 +1,24 @@
 import React, { useState } from "react";
-import axios from 'axios'
+import axios from 'axios';
 
-const InputTodo = () => {
+const InputTodo = ({ refreshTodos }) => {
   const [description, setDescription] = useState("");  
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-
-    try{
-        const body = {description}
-        // JSON.stringify(body)
-        const response = await axios.post("http://localhost:3000/todos", body)
-        console.log(response);
-        setDescription("")
+    try {
+      const body = { description };
+      await axios.post("http://localhost:3000/todos", body);
+      setDescription("");
+      refreshTodos();
+    } catch(err) {
+      console.log(err.message);
     }
-    catch(err){
-        console.log(err.messsage);
-    }
-
-  }
+  };
 
   return (
     <div className="w-full flex flex-col items-center">
-      <h1 className="text-4xl font-semibold">Todo List</h1>
-      <form className="mt-8 max-w-[750px] w-full flex items-center gap-x-4" onSubmit={handleSubmit}>
+      <form className="mt-8 max-w-[900px] w-full flex items-center gap-x-4" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Add todo"

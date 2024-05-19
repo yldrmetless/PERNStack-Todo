@@ -1,35 +1,20 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import EditTodo from "./EditTodo";
+import axios from "axios";
 
-const ListTodos = () => {
-  const [todos, setTodos] = useState([]);
-  const getTodos = async () => {
-    const response = await axios.get("http://localhost:3000/todos");
-
-    // console.log(response.data);
-
-    setTodos(response.data);
-  };
-
-  useEffect(() => {
-    getTodos();
-  }, []);
+const ListTodos = ({ todos, refreshTodos }) => {
 
   const deleteTodo = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:3000/todos/${id}`);
-      setTodos(todos.filter(todo => todo.todo_id !== id))
+      await axios.delete(`http://localhost:3000/todos/${id}`);
+      refreshTodos();
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  console.log(todos);
-
-
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center mt-8">
       <table className="flex flex-col justify-center">
         <thead>
           <tr className="max-w-[900px] w-full grid place-items-start grid-cols-3 gap-x-60 border-b py-1">
@@ -46,9 +31,7 @@ const ListTodos = () => {
             >
               <td>{todo.description}</td>
               <td>
-                <button className="bg-blue-500 hover:bg-blue-600 transition-all duration-200 px-3 py-1 text-white rounded-md">
-                  <EditTodo todo={todo}/>
-                </button>
+                <EditTodo todo={todo} refreshTodos={refreshTodos} />
               </td>
               <td>
                 <button
